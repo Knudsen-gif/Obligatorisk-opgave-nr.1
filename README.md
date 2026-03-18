@@ -1,4 +1,4 @@
-### Obligatorisk-opgave-nr.1
+### OBLIGATORISK OPGAVE NR. 1
 
 ## LIBRARY MANAGEMENT SYSTEM
 
