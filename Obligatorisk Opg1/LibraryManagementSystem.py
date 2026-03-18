@@ -5,11 +5,11 @@
 
 #LibraryEntity is the base class for all entities in the library system:
 class LibraryEntity: 
+# display_info is defined here, but the implementation is left to the subclasses: 
     def display_info(self):
-    # display_info is defined here, but the implementation is left to the subclasses. 
     
-    # NotImplementedError is used as safety measure so the program would crash, if i forgot to display_info about an item,
-    # which in a management system isnt very good, if you can watch what is in it, so it makes "invisible" items:
+    # NotImplementedError is used as safety measure so the program would crash, if i forgot to display_info about an item:
+    # which in a management system isnt very good, if you can't watch what is in it, so it makes "invisible" items:
         raise NotImplementedError("Subclasses must implement this method")
 
 #This class defines what a book is in the library system:
@@ -71,100 +71,179 @@ class Library:
         
 # Add Book: 
     def add_book(self, book):
+    # Add a Book to the inventory using its unique ID:
         self.books[book.book_id] = book 
         
 # Remove Book: 
     def remove_book(self, book_id):
+    # Checking if the book exists in the inventory:
         if book_id in self.books:
-            del self.books[book_id]
+        # Remove the book and store it temporarily by using .pop:
+            removed_item = self.books.pop(book_id)
+            print("\n" + "=" * 130)
+            print(f" The Book '{removed_item.title}' was successfully removed.")
+            print("=" * 130)
         else:
+        # Shows an error message if the book can't be found:
             print(f"Error: The Book ID {book_id} could not be found...")
 
 #Update Book:       
     def update_book(self, book_id, title=None, author=None, copies=None):
+    # Checks if the book exists in the inventory:
         if book_id in self.books:
+        # Gets the book object:
             book = self.books[book_id]
+            
+        # Updating the book details only if these new values are provided:
             if title: book.title = title 
             if author: book.author = author 
             if copies is not None: book.copies = copies
+            
+        # Print if the book was successfully updated:
             print("\n" + "=" * 130)
             print(f" The Book ID {book_id} has been successfully updated.")
             print("=" * 130)
+            
+            return True
         else:
+        # Print an error message if the book can't be found:
             print(f"Error: Could not find The Book ID {book_id} to update.")
+            
+            return False
                  
 # Add DVD:      
     def add_dvd(self, dvd):
+    # Add a DVD to the inventory using its unique ID
         self.dvds[dvd.dvd_id] = dvd
     
 # Remove DVD:
     def remove_dvd(self, dvd_id):
+    # Checking if the dvd exists in the inventory:
         if dvd_id in self.dvds:
+        # Remove the dvd and store it temporarily by using .pop:
             removed_item = self.dvds.pop(dvd_id)
+        # Prints if the dvd was successfully removed temporarily:
             print(f"The DVD '{removed_item.title}' was successfully removed.")
         else:
+        # # Shows an error message if the dvd can't be found:
             print(f"Error: The DVD ID {dvd_id} could not be found...")
          
 # Update DVD:   
     def update_dvd(self, dvd_id, title= None, director= None, copies= None):
+    # Checks if the dvd exists in the inventory:
         if dvd_id in self.dvds:
+        # Gets the dvd object:
                dvd = self.dvds[dvd_id]
+            # Updating the dvd details only if these new values are provided:
                if title: dvd.title = title
                if director: dvd.director = director
                if copies is not None: dvd.copies = copies
+               
+            # Print if the dvd was successfully updated:
+               print("\n" + "=" * 130)
                print(f" The DVD ID {dvd_id} has been succesfully updated.")
+               print("=" * 130)
+               
+               return True
         else:
+            # Print an error message if the dvd can't be found:
             print(f"Error: Could not find the DVD ID {dvd_id} to update.")
+            
+            return False
 
 # Add Member:
     def add_member(self, member):
+    # Register a new member in the dictionary using their unique member_id as the key:
         self.members[member.member_id] = member
         
 # Remove Member:
     def remove_member(self,member_id):
-        self.members.pop(member_id, None)
+    # Temporary remove the member and store it to use their name in the message:
+        if member_id in self.members:
+            removed_member = self.members.pop(member_id)
+        
+            print("\n" + "=" * 130)
+            print(f" The Member '{removed_member.name}' was successfully removed.")
+            print("=" * 130)
+            
+            return True
+        else:
+            print(f"Error: Member ID {member_id} could not be found...")
+            
+            return False
     
 # Update Member:   
     def update_member(self, member_id, name):
+    # Check if the member exists in the registry:
         if member_id in self.members:
+        # Update the member's name: 
             self.members[member_id].name = name
+                
+        # Print if the members name was successfully updated:
+            print("\n" + "=" * 130)
+            print(f"Member ID {member_id} has been successfully updated.")
+            print("=" * 130)
             
-# Issuing Books & Returning:
+            return True
+        else:
+        # Print an error message if the member can't be found:
+            print(f"Error: Member ID {member_id} not found.")
+            
+            return False
+            
+#Issuing Books & Returning:
+# Issuing:
     def issue_book(self, book_id, member_id):
+    # Get the book & member object using their IDs:
         book = self.books.get(book_id)
         member = self.members.get(member_id)
-        
+
+    # Checking if both exist and if there are available copies:
         if book and member and book.copies > 0:
             book.copies -=1
             member.borrow_item(book)
+
             print("\n" + "=" * 130)
             print("ISSUED BOOKS:".center(130))
             print(f"\n The Book '{book.title}' has successfully been issued to {member.name}.")
             print("=" * 130)
         
-            return True
+            return True # True only if the book was issued:
         else:
-            print(f"\nError: Issued failed...")
-            return False
-            
+            print(f"\nError: Issue failed...")
+            return False # False if the book failed to issued due to unmet conditions:
+        
+# Returning:      
     def return_book(self, book_id, member_id):
+    # Retrieve the book and member objects using their IDs:
         book = self.books.get(book_id)
         member = self.members.get(member_id)
         
+    # Check if both exist and if the member successfully returns the item:
         if member and book and member.return_item(book):
+        # Increase the available copies in the inventory: 
             book.copies += 1
+            
             print("\n" + "=" * 130)
             print("RETURNED BOOKS:".center(130))
             print(f"\n The Book '{book.title}' has successfully been returned by {member.name}.")
             print("=" * 130)
+
+            return True # True if the book was found and returned:
         else:
-            print(f"Error: Returned failed...")
+        # Print an error if the IDs are wrong or the member didn't have this book:
+            print(f"Error: Return failed...")
             
-# Issuing DVDs & Returning:
+            return False # False if the transaction could not be completed:
+            
+#Issuing DVDs & Returning:
+# Issuing:
     def issue_dvd(self, dvd_id, member_id):
+    # Get the dvd & member object using their IDs:
         dvd = self.dvds.get(dvd_id)
         member = self.members.get(member_id)
-        
+
+    # Checking if both exist and if there are available copies:
         if dvd and member and dvd.copies > 0:
             dvd.copies -= 1
             member.borrow_item(dvd)
@@ -174,32 +253,42 @@ class Library:
             print(f"\n The DVD '{dvd.title}' has successfully been issued to {member.name}.")
             print("=" * 130)
             
-            return True
+            return True 
         else:
-            print(f"\nError: The DVD Issue failed...") 
+            print(f"\nError: Issue failed...") 
             
-            return False
-            
+            return False 
+        
+# Returning:       
     def return_dvd(self, dvd_id, member_id):
+    # Retrieve the dvd and member objects using their IDs:
         dvd = self.dvds.get(dvd_id)
         member = self.members.get(member_id)
         
+    # Check if both exist and if the member successfully returns the item:
         if member and dvd and member.return_item(dvd):
+        # Increase the available copies in the inventory: 
             dvd.copies += 1 
             
             print("\n" + "=" * 130)
             print("RETURNED DVD:".center(130))
             print(f"\n The DVD '{dvd.title}' has successfully been returned by {member.name}.")
             print("=" * 130)
+            
+            return True
         else:
             print(f"Error: DVD return failed...")
             
-# Displaying books:      
+            return False
+            
+# Displaying all books:      
     def display_books(self):
+    # Print the header for the books section:
         print("\n" + "=" * 130)
         print("LIBRARY BOOKS".center(130))
         print("=" * 130)
         
+    # Access each book in the inventory and call its display method:
         for book in self.books.values():
             book.display_info()
         
@@ -207,20 +296,24 @@ class Library:
 
 # Displaying DVDs:
     def display_dvds(self):
+    # Print the header for the dvd section:
         print("\n" + "=" * 130)
         print("LIBRARY DVDS".center(130))
         print("=" * 130)     
         
+    # Access each dvd in the inventory and call its display method:
         for dvd in self.dvds.values():
             dvd.display_info()
         print("=" * 130 + "\n")
         
 # Displaying Members:   
     def display_members(self):
+    # Print the header for the member register:
         print("\n" + "=" * 130)
         print("LIBRARY MEMBERS".center(130))
         print("=" * 130)
         
+    # Access each member in the registry and call its display method:
         for member in self.members.values():
             member.display_info()
             
@@ -228,30 +321,34 @@ class Library:
         
 # Searching Feature: 
     def search_inventory(self, keyword):
+    # Print a header showing what the user is searching for:
         print("\n" + "=" * 130)
         print(f"SEARCH RESULTS FOR: '{keyword}'".center(130))
         print("=" * 130)
         
         found_items = []
+    # Convert the keyword to lowercase to ensure the search is not case-sensitive:
+    # It makes it so it doesn't matter if you spelled it with a little p or big P if you searched "python":
         keyword = keyword.lower()
         
-    # Search for Books:
+    # Search for Books by checking if the keyword is in the title or author:
         for book in self.books.values():
             if keyword in book.title.lower() or keyword in book.author.lower():
                 book.display_info()
                 found_items.append(book)
                 
-    # Search for DvDs:
+    # Search for DVDs by checking if the keyword is in the title or director:
         for dvd in self.dvds.values():
             if keyword in dvd.title.lower() or keyword in dvd.director.lower():
                 dvd.display_info()
                 found_items.append(dvd)
                 
-    # If there is no result:    
+    # Display a message if no matches were found in either category:
         if not found_items:
             print(f"There were no result for '{keyword}'".center(130))
         print("=" * 130 + "\n")
         
+    # Return the list of found items for potential use elsewhere in the program:
         return found_items
 
 ############################################################
@@ -346,5 +443,4 @@ if __name__ == "__main__":
 # Searching Feature:
     my_library.search_inventory("python")
 
-    
     
