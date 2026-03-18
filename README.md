@@ -1,7 +1,8 @@
-#--------------------------#
-# Obligatorisk-opgave-nr.1 #
-#--------------------------#
+
+ #Obligatorisk-opgave-nr.1#
+
 LIBRARY MANAGEMENT SYSTEM
+
 Description: 
 The program is a python-based system ment for managing items, members & transactions. 
 This program was developed to demonstrate understanding of OOP concept such as classes, objects, inheritance & polymorphism.  
