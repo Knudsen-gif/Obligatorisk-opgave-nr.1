@@ -7,11 +7,11 @@ The program is a python-based system ment for managing items, members & transact
 This program was developed to demonstrate understanding of OOP concept such as classes, objects, inheritance & polymorphism.  
 
 ### Features: 
-1.Inventory Mangement: You are able to add, update & remove items(books & DVDs).  
-2.Member Tracking: You are able to Register members, and track which items they currently have borrowed.   
-3.Transaction Logic: The inventory is automated, so when an item is issued or returned form a member the copies will decrease or increase.   
-4.Serach Funktion: Keyword-based searchs across titles, authors & directors.   
-5.Console Output: The console output is formatted as tabular data presentation, which makes it easy to read & clean. This is also done by using f-string alignment.   
+1. Inventory Mangement: You are able to add, update & remove items(books & DVDs).  
+2. Member Tracking: You are able to Register members, and track which items they currently have borrowed.   
+3. Transaction Logic: The inventory is automated, so when an item is issued or returned form a member the copies will decrease or increase.   
+4. Serach Funktion: Keyword-based searchs across titles, authors & directors.   
+5. Console Output: The console output is formatted as tabular data presentation, which makes it easy to read & clean. This is also done by using f-string alignment.   
 
 ### Testing:
 To check if the systems functions work correctly, there have been made a test_LMS.py.
