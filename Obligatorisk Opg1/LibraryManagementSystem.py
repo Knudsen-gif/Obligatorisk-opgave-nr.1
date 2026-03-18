@@ -37,7 +37,7 @@ class DVD (LibraryEntity):
 
 # Prints formatted information about the DVD:    
     def display_info(self):
-        print(f"ID: {self.dvd_id:<1} | {self.title:<60} by {self.director:<26} | Copies: {self.copies:<1}") 
+        print(f"ID: {self.dvd_id:<1} | Title: {self.title:<60} | Director: {self.director:<24} | Copies: {self.copies:<1}") 
                
 class Member(LibraryEntity):
 # This class represents a library member and tracks their borrowed items:
@@ -87,7 +87,9 @@ class Library:
             if title: book.title = title 
             if author: book.author = author 
             if copies is not None: book.copies = copies
+            print("\n" + "=" * 130)
             print(f" The Book ID {book_id} has been successfully updated.")
+            print("=" * 130)
         else:
             print(f"Error: Could not find The Book ID {book_id} to update.")
                  
@@ -135,12 +137,15 @@ class Library:
         if book and member and book.copies > 0:
             book.copies -=1
             member.borrow_item(book)
-            print("\n" + "=" * 115)
-            print("ISSUED BOOKS:".center(115))
+            print("\n" + "=" * 130)
+            print("ISSUED BOOKS:".center(130))
             print(f"\n The Book '{book.title}' has successfully been issued to {member.name}.")
-            print("=" * 115)
+            print("=" * 130)
+        
+            return True
         else:
-            print(f"Error: Issued failed...")
+            print(f"\nError: Issued failed...")
+            return False
             
     def return_book(self, book_id, member_id):
         book = self.books.get(book_id)
@@ -148,10 +153,10 @@ class Library:
         
         if member and book and member.return_item(book):
             book.copies += 1
-            print("\n" + "=" * 115)
-            print("RETURNED BOOKS:".center(115))
+            print("\n" + "=" * 130)
+            print("RETURNED BOOKS:".center(130))
             print(f"\n The Book '{book.title}' has successfully been returned by {member.name}.")
-            print("=" * 115)
+            print("=" * 130)
         else:
             print(f"Error: Returned failed...")
             
@@ -168,8 +173,12 @@ class Library:
             print("ISSUED DVD:".center(130))
             print(f"\n The DVD '{dvd.title}' has successfully been issued to {member.name}.")
             print("=" * 130)
+            
+            return True
         else:
-            print(f"Error: The DVD Issue failed...") 
+            print(f"\nError: The DVD Issue failed...") 
+            
+            return False
             
     def return_dvd(self, dvd_id, member_id):
         dvd = self.dvds.get(dvd_id)
@@ -223,116 +232,119 @@ class Library:
         print(f"SEARCH RESULTS FOR: '{keyword}'".center(130))
         print("=" * 130)
         
-        found = False
+        found_items = []
         keyword = keyword.lower()
         
     # Search for Books:
         for book in self.books.values():
             if keyword in book.title.lower() or keyword in book.author.lower():
                 book.display_info()
-                found = True
+                found_items.append(book)
                 
     # Search for DvDs:
         for dvd in self.dvds.values():
             if keyword in dvd.title.lower() or keyword in dvd.director.lower():
                 dvd.display_info()
-                found = True
+                found_items.append(dvd)
                 
     # If there is no result:    
-        if not found:
+        if not found_items:
             print(f"There were no result for '{keyword}'".center(130))
         print("=" * 130 + "\n")
+        
+        return found_items
 
 ############################################################
 #                  Functional Requirements:                #
 ############################################################
-
-my_library = Library()
+if __name__ == "__main__":
+    my_library = Library()
 
 #Book Management: 
 # Adding books:
-book1 = Book(1, "The Pragmatic Programmer", "Andy Hunt & Dave Thomas", 1)
-book2 = Book(2, "Clean Code", "Robert Martin", 3)
-book3 = Book(3, "Code Complete: A Practical Handbook of Software Construction", "Steve McConnell", 2)
-book4 = Book(4, "Refactoring", "Martin Fowler & Kent Beck", 7)
-book5 = Book(5, "Python Crash Course", "Eric Matthes", 9)
-book6 = Book(6, "Automate the Boring Stuff with Python", "Al Sweigart", 4)
+    book1 = Book(1, "The Pragmatic Programmer", "Andy Hunt & Dave Thomas", 1)
+    book2 = Book(2, "Clean Code", "Robert Martin", 3)
+    book3 = Book(3, "Code Complete: A Practical Handbook of Software Construction", "Steve McConnell", 2)
+    book4 = Book(4, "Refactoring", "Martin Fowler & Kent Beck", 7)
+    book5 = Book(5, "Python Crash Course", "Eric Matthes", 9)
+    book6 = Book(6, "Automate the Boring Stuff with Python", "Al Sweigart", 4)
 
-my_library.add_book(book1)
-my_library.add_book(book2)
-my_library.add_book(book3)
-my_library.add_book(book4)
-my_library.add_book(book5)
-my_library.add_book(book6)
+    my_library.add_book(book1)
+    my_library.add_book(book2)
+    my_library.add_book(book3)
+    my_library.add_book(book4)
+    my_library.add_book(book5)
+    my_library.add_book(book6)
 
 # Removing books: 
-my_library.remove_book(1)
+    my_library.remove_book(1)
 
 # Update Book Details: 
-my_library.update_book(2, title = "Clean Code: A Handbook of Agile Software Craftsmanship", author = "Robert Cecil Martin", copies = 5)
+    my_library.update_book(2, title = "Clean Code: A Handbook of Agile Software Craftsmanship", author = "Robert Cecil Martin", copies = 5)
 
 # Adding DVDs:
-dvd1 =DVD(1, "Interstellar", "Christopher Nolan", 3)
-dvd2 =DVD(2, "The Dark Knight", "Christopher Nolan", 2)
-dvd3 =DVD(3, "Darkest Hour", "Joe Wright", 5)
-dvd4 =DVD(4, "War Machine", "Patrick Hughes", 1)
-dvd5 =DVD(5, "The Man Who Knew Infinity", "Matthew Brown", 7)
+    dvd1 =DVD(1, "Interstellar", "Christopher Nolan", 3)
+    dvd2 =DVD(2, "The Dark Knight", "Christopher Nolan", 2)
+    dvd3 =DVD(3, "Darkest Hour", "Joe Wright", 5)
+    dvd4 =DVD(4, "War Machine", "Patrick Hughes", 1)
+    dvd5 =DVD(5, "The Man Who Knew Infinity", "Matthew Brown", 7)
+    dvd6 =DVD(6, "Python", "Richard Clabaugh", 2)
 
-my_library.add_dvd(dvd1)
-my_library.add_dvd(dvd2)
-my_library.add_dvd(dvd3)
-my_library.add_dvd(dvd4)
-my_library.add_dvd(dvd5)
-
+    my_library.add_dvd(dvd1)
+    my_library.add_dvd(dvd2)
+    my_library.add_dvd(dvd3)
+    my_library.add_dvd(dvd4)
+    my_library.add_dvd(dvd5)
+    my_library.add_dvd(dvd6)
+    
 #Member Management:
 # Adding Members:
-member1 = Member(1, "Thomas Nielsen")
-member2 = Member(2, "Mette Hansen")
-member3 = Member(3, "Hanne Jensen")
-member4 = Member(4, "Lars Pedersen")
-member5 = Member(5, "Emil Skov")
+    member1 = Member(1, "Thomas Nielsen")
+    member2 = Member(2, "Mette Hansen")
+    member3 = Member(3, "Hanne Jensen")
+    member4 = Member(4, "Lars Pedersen")
+    member5 = Member(5, "Emil Skov")
 
-my_library.add_member(member1)
-my_library.add_member(member2)
-my_library.add_member(member3)
-my_library.add_member(member4)
-my_library.add_member(member5)
+    my_library.add_member(member1)
+    my_library.add_member(member2)
+    my_library.add_member(member3)
+    my_library.add_member(member4)
+    my_library.add_member(member5)
 
 # Removing Members:
-my_library.remove_member(3)
+    my_library.remove_member(3)
 
 # Updating Members:
-my_library.update_member(5, "Emil Kristensen")
+    my_library.update_member(5, "Emil Kristensen")
 
 # Issuing and Returning books:
 # Issuing books:
-my_library.issue_book(2,4)
-my_library.issue_book(4,2)
-my_library.issue_book(5,1)
-my_library.issue_book(5,5)
+    my_library.issue_book(2,4)
+    my_library.issue_book(4,2)
+    my_library.issue_book(5,1)
+    my_library.issue_book(5,5)
 
 # Returning books:
-my_library.return_book(2,4)
-my_library.return_book(5,5)
+    my_library.return_book(2,4)
+    my_library.return_book(5,5)
 
 # Issuing and returning dvds:
-my_library.issue_dvd(2,4)
-my_library.issue_dvd(3,5)
-my_library.issue_dvd(4,5)
+    my_library.issue_dvd(2,4)
+    my_library.issue_dvd(3,5)
+    my_library.issue_dvd(4,5)
 
 # Displaying all books: 
-my_library.display_books()
+    my_library.display_books()
 
 # Displaying all DvDs:
-my_library.display_dvds()
+    my_library.display_dvds()
 
 # Displaying All Members
-my_library.display_members()
+    my_library.display_members()
 
 #Additional Features  
 # Searching Feature:
-my_library.search_inventory("Dark")
-
+    my_library.search_inventory("python")
 
     
     
